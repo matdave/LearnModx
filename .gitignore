@@ -1,0 +1,13 @@
+# Files
+.DS_Store
+ht.access
+.htaccess
+index.php
+
+# Dirs
+.idea/
+config.core.php
+connectors/
+manager/
+core/
+setup/
