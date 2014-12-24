@@ -5,8 +5,8 @@
  */
  
 require_once dirname(dirname(__FILE__)) . '/index.class.php';
- 
-class LearnModxHomeManagerController extends LearnModxManagerController {
+
+abstract class LearnModxIndexManagerController extends LearnModxManagerController {
     public function getPageTitle() {
         return $this->modx->lexicon('learnmodx');
     }

@@ -2,7 +2,7 @@ LearnModx.grid.LearnModx = function(config) {
     config = config || {};
     Ext.applyIf(config,{
         id: 'learnmodx-grid-learnmodx'
-        ,url: SmartCache.config.connectorUrl
+        ,url: LearnModx.config.connectorUrl
         ,baseParams: {
             action: 'mgr/learnmodx/getList'
             ,active: 1
@@ -55,7 +55,7 @@ LearnModx.grid.LearnModx = function(config) {
     });
     LearnModx.grid.LearnModx.superclass.constructor.call(this,config)
 };
-Ext.extend(SmartCache.grid.LearnModx,MODx.grid.Grid,{
+Ext.extend(LearnModx.grid.LearnModx,MODx.grid.Grid,{
     getMenu: function() {
         return [{
             text: _('learnmodx.rule_update')

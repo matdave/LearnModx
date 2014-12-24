@@ -13,6 +13,7 @@ class IndexManagerController extends modExtraManagerController {
         return 'home'; 
     }
 }
+
 abstract class LearnModxManagerController extends modManagerController {
     public $learnmodx;
     
