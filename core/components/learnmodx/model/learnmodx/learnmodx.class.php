@@ -49,6 +49,9 @@ class LearnModx {
             'cssUrl' => $assetsUrl . 'css/',
             'assetsUrl' => $assetsUrl,
             'connectorUrl' => $assetsUrl . 'connector.php',
+
+            'chapter' => 1,
+            'section' => 0,
         ), $config);
 
         $this->modx->addPackage('learnmodx', $this->config['modelPath']);

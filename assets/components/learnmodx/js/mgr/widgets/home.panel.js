@@ -43,17 +43,54 @@ LearnModx.panel.Home = function(config) {
                     ,name: 'chapter'
                     ,anchor: '100%'
                     ,allowBlank: true
+                    ,value: LearnModx.config.chapter
                 },{
                     xtype: 'learnmodx-combo-section'
                     ,fieldLabel: _('learnmodx:section')
                     ,name: 'section'
                     ,anchor: '100%'
                     ,allowBlank: true
+                    ,value: LearnModx.config.section
+                },{
+                    xtype: 'panel'
+                    ,style: 'text-align: right'
+                    ,items: [{
+                        xtype: 'button'
+                        ,text: _('learnmodx:load')
+                        ,cls: 'primary-button'
+                    }]
+                },{
+                    xtype: 'panel'
+                    ,html: '<hr />'
+                },{
+                    xtype: 'panel'
+                    ,style: 'text-align: right'
+                    ,items: [{
+                        xtype: 'button'
+                        ,text: _('learnmodx:load')
+                        ,cls: 'primary-button'
+                    }]
+                },{
+                    xtype: 'panel'
+                    ,html: '<hr />'
+                },{
+                    xtype: 'panel'
+                    ,style: 'text-align: right'
+                    ,items: [{
+                        xtype: 'button'
+                        ,text: _('learnmodx:load')
+                        ,cls: 'primary-button'
+                    }]
                 }]
             }]
         }]
     });
     LearnModx.panel.Home.superclass.constructor.call(this,config);
+
+    (function(scope){
+        console.log(scope);
+        console.log(LearnModx.config);
+    })(this);
 };
 Ext.extend(LearnModx.panel.Home, MODx.Panel);
 Ext.reg('learnmodx-panel-home', LearnModx.panel.Home);
@@ -69,9 +106,14 @@ LearnModx.combo.Chapter = function(config){
         ,valueField: 'id'
         ,fields: ['id','chapter']
         ,url: LearnModx.config.connectorUrl
-        ,value: ''
+        ,typeAhead: true
+
     });
     LearnModx.combo.Chapter.superclass.constructor.call(this,config);
+
+    this.on('load', function (e) {
+        console.log('derp');
+    });
 };
 Ext.extend(LearnModx.combo.Chapter,MODx.combo.ComboBox);
 Ext.reg('learnmodx-combo-chapter',LearnModx.combo.Chapter);
@@ -81,6 +123,7 @@ LearnModx.combo.Section = function(config){
     Ext.applyIf(config,{
         baseParams:{
             action: 'mgr/learnmodx/getSections'
+            ,chapter: LearnModx.config.chapter
         }
         ,defaultValue: 0
         ,displayField: 'section'
