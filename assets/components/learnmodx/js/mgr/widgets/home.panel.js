@@ -26,6 +26,7 @@ LearnModx.panel.Home = function(config) {
                 ,layout: 'anchor'
                 ,items: [{
                     xtype: 'panel'
+                    ,id: 'learnmodx-content'
                     ,cls:'main-wrapper'
                     ,layout: 'form'
                     ,labelAlign: 'top'
@@ -86,33 +87,36 @@ LearnModx.panel.Home = function(config) {
         }]
     });
     LearnModx.panel.Home.superclass.constructor.call(this,config);
-
-    (function(scope){
-        console.log(scope);
-        console.log(LearnModx.config);
-    })(this);
 };
 Ext.extend(LearnModx.panel.Home, MODx.Panel);
 Ext.reg('learnmodx-panel-home', LearnModx.panel.Home);
 
-LearnModx.combo.Chapter = function(config){
+LearnModx.combo.Chapter = function(config) {
     config = config || {};
-    Ext.applyIf(config,{
-        baseParams:{
+    Ext.applyIf(config, {
+        baseParams: {
             action: 'mgr/learnmodx/getChapters'
-        }
-        ,defaultValue: 0
-        ,displayField: 'chapter'
-        ,valueField: 'id'
-        ,fields: ['id','chapter']
-        ,url: LearnModx.config.connectorUrl
-        ,typeAhead: true
+        },
+        displayField: 'name',
+        valueField: 'id',
+        fields: ['id', 'name'],
+        url: LearnModx.config.connectorUrl,
+        typeAhead: true
 
     });
-    LearnModx.combo.Chapter.superclass.constructor.call(this,config);
+    LearnModx.combo.Chapter.superclass.constructor.call(this, config);
 
-    this.on('load', function (e) {
-        console.log('derp');
+    // On change
+    this.on('select', function (combo) {
+        // Save chapter
+        LearnModx.config.chapter = combo.value;
+
+        // Set section to 0
+        LearnModx.config.section = 0;
+
+        // Reload sections
+
+
     });
 };
 Ext.extend(LearnModx.combo.Chapter,MODx.combo.ComboBox);
@@ -125,14 +129,34 @@ LearnModx.combo.Section = function(config){
             action: 'mgr/learnmodx/getSections'
             ,chapter: LearnModx.config.chapter
         }
-        ,defaultValue: 0
-        ,displayField: 'section'
+        ,displayField: 'name'
         ,valueField: 'id'
-        ,fields: ['id','section']
+        ,fields: ['id','name']
         ,url: LearnModx.config.connectorUrl
         ,value: ''
     });
     LearnModx.combo.Section.superclass.constructor.call(this,config);
+
+    // On change
+    this.on('select', function (combo) {
+        // Save chapter
+        LearnModx.config.section = combo.value;
+
+        // Load
+        MODx.Ajax.request({
+            url: LearnModx.config.connectorUrl
+            ,params: {
+                action: 'mgr/learnmodx/get'
+                ,chapter: LearnModx.config.chapter
+                ,section: LearnModx.config.section
+            }
+            ,listeners: {
+                'success':{fn:function(r) {
+                    Ext.getCmp('learnmodx-content').update(r.content);
+                },scope:this}
+            }
+        });
+    });
 };
 Ext.extend(LearnModx.combo.Section,MODx.combo.ComboBox);
 Ext.reg('learnmodx-combo-section',LearnModx.combo.Section);

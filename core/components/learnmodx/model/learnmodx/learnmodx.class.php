@@ -19,6 +19,8 @@
  * @package learnmodx
  */
 
+require_once dirname(dirname(dirname(__FILE__))) . '/vendor/michelf/php-markdown/Michelf/MarkdownExtra.inc.php';
+
 class LearnModx {
     
     /**
@@ -27,9 +29,64 @@ class LearnModx {
 
     private $modx;
     private $elementsPath;
-    private $chapter;
-    private $section;
-    private $chapters;
+    private $currentChapter;
+    private $crrentSection;
+
+    /**
+     * Chapters
+     */
+
+    private $chapters = array(
+        array(
+            'id' => 0,
+            'name' => '1 - Intro'
+        ),
+        array(
+            'id' => 1,
+            'name' => '2 - Elements'
+        ),
+        array(
+            'id' => 2,
+            'name' => '2 - Test123'
+        ),
+    );
+
+    /**
+     * Sections
+     */
+
+    private $sections = array(
+        0 => array(
+            0 => array(
+                'id' => 0,
+                'name' => 'Hello World',
+            ),
+            1 => array(
+                'id' => 1,
+                'name' => 'Hello world again',
+            ),
+        ),
+        1 => array(
+            0 => array(
+                'id' => 0,
+                'name' => 'Hello2',
+            ),
+            1 => array(
+                'id' => 1,
+                'name' => 'Hello2-2',
+            ),
+        ),
+        2 => array(
+            0 => array(
+                'id' => 0,
+                'name' => 'Hello2',
+            ),
+            1 => array(
+                'id' => 1,
+                'name' => 'Hello2-2',
+            ),
+        ),
+    );
     
     /**
      * Constructs the LearnModx object
@@ -41,8 +98,8 @@ class LearnModx {
         $this->modx = &$modx;
 
         // Load chapter and section here
-        $this->chapter = 0;
-        $this->section = 0;
+        $this->currentChapter = 0;
+        $this->currentSection = 0;
 
         // Usual stuff
         $basePath = $this->modx->getOption('learnmodx.core_path', $config,$this->modx->getOption('core_path') . 'components/learnmodx/');
@@ -64,15 +121,12 @@ class LearnModx {
 
             // LearnModx stuff
             'elementsPath' => $this->elementsPath,
-            'chapter' => $this->chapter,
-            'section' => $this->section,
+            'chapter' => $this->currentChapter,
+            'section' => $this->currentSection,
         ), $config);
 
 
         $this->modx->addPackage('learnmodx', $this->config['modelPath']);
-
-        // Load all chapters
-        $this->getAllChapters();
     }
 
     /**
@@ -101,10 +155,10 @@ class LearnModx {
      */
 
     public function getChapter() {
-        return $this->chapter;
+        return $this->thisChapter;
     }
     public function getSection() {
-        return $this->section;
+        return $this->currentSection;
     }
 
     /**
@@ -112,34 +166,6 @@ class LearnModx {
      */
 
     public function getAllChapters() {
-        if ($this->chapters == null) {
-            // Hold all chapters
-            $this->chapters = array();
-
-            // Get all chapters
-            $dirs = glob($this->elementsPath . '*' , GLOB_ONLYDIR);
-
-            // Loop all chapters
-            foreach ($dirs as $dir) {
-                // Get chapter id
-                $dir_split = explode('/', $dir);
-                $num = $dir_split[count($dir_split) - 1];
-
-                // Include class
-                require_once $dir . '/chapter' . $num . '.php';
-
-                // Get variables from class
-                $vars = get_class_vars('Chapter' . $num);
-
-                // Get information about class
-                $this->chapters[] = array(
-                    'id' => $num,
-                    'chapter' => $vars['chapter'] . ' - ' . $vars['name'],
-                );
-            }
-        }
-
-
         // Return chapters
         return $this->chapters;
     }
@@ -149,22 +175,7 @@ class LearnModx {
      */
 
     public function getSectionsForChapter($chapter) {
-        return call_user_func_array(array('Chapter' . $this->chapter, 'getSections'), array());
-    }
-
-    /**
-     * Returns name for a given chapter
-     */
-
-    public function getChapterById($chapter_id) {
-        $chapters = $this->getAllChapters();
-        foreach ($chapters as $chapter) {
-            if ($chapter['id'] == $chapter_id) {
-                return $chapter['chapter'];
-            }
-        }
-
-        return '';
+        return $this->sections[$chapter];
     }
 
     /**
@@ -176,6 +187,22 @@ class LearnModx {
     }
 
     /**
+     * Returns content for a section
+     */
+
+    public function getSectionContent($chapter, $section) {
+        // Get content
+        $content = file_get_contents($this->config['elementsPath'] . $this->currentChapter . '/section' . $this->currentSection . '.md');
+
+        // New instance of Markdown
+        $parser = new \Michelf\MarkdownExtra;
+
+        // Parse
+        return $parser::defaultTransform($content);
+
+    }
+
+    /**
      * Output for processors
      */
 
@@ -184,6 +211,12 @@ class LearnModx {
             'success' => true,
             'results' => $arr,
             'total' => count($arr),
+        ));
+    }
+    public function rawOutput($content) {
+        return json_encode(array(
+            'success' => true,
+            'content' => $content
         ));
     }
 }
