@@ -22,3 +22,6 @@
 $_lang['learnmodx'] = 'Learn MODx';
 $_lang['learnmodx:default'] = 'Learn MODx';
 $_lang['learnmodx:desc'] = 'Tutorial to help you learn MODx';
+
+$_lang['learnmodx:chapter'] = 'Chapter';
+$_lang['learnmodx:section'] = 'Section';
