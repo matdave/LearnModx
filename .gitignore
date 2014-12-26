@@ -2,3 +2,7 @@
 
 .DS_Store
 config.core.php
+
+core/components/learnmodx/composer.phar
+core/components/learnmodx/composer.lock
+core/components/learnmodx/vendor
