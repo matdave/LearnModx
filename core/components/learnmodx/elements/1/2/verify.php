@@ -19,6 +19,7 @@ class SectionVerify extends LearnModxVerify {
 
         if ($resource != null) {
             $this->compare('Hello', $resource->get('pagetitle'));
+            $this->compare('Hello world', $resource->get('longtitle'));
         }
     }
 }
