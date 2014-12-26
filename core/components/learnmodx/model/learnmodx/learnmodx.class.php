@@ -47,8 +47,11 @@ class LearnModx {
     function __construct(modX &$modx, array $config = array()) {
         $this->modx = &$modx;
 
+        // Get namespace core path
+        $namespace = $this->modx->getObject('modNamespace','learnmodx');
+        $basePath = $namespace->get('path');
+
         // Usual stuff
-        $basePath = $this->modx->getOption('learnmodx.core_path', $config,$this->modx->getOption('core_path') . 'components/learnmodx/');
         $assetsUrl = $this->modx->getOption('learnmodx.assets_url', $config,$this->modx->getOption('assets_url') . 'components/learnmodx/');
 
         // Paths for LearnModx
