@@ -28,65 +28,15 @@ class LearnModx {
      */
 
     private $modx;
+
+    // Paths
+    private $basePath;
     private $elementsPath;
+    private $storeagePath;
+
+    // Progress
     private $currentChapter;
-    private $crrentSection;
-
-    /**
-     * Chapters
-     */
-
-    private $chapters = array(
-        array(
-            'id' => 0,
-            'name' => '1 - Intro'
-        ),
-        array(
-            'id' => 1,
-            'name' => '2 - Elements'
-        ),
-        array(
-            'id' => 2,
-            'name' => '2 - Test123'
-        ),
-    );
-
-    /**
-     * Sections
-     */
-
-    private $sections = array(
-        0 => array(
-            0 => array(
-                'id' => 0,
-                'name' => 'Hello World',
-            ),
-            1 => array(
-                'id' => 1,
-                'name' => 'Hello world again',
-            ),
-        ),
-        1 => array(
-            0 => array(
-                'id' => 0,
-                'name' => 'Hello2',
-            ),
-            1 => array(
-                'id' => 1,
-                'name' => 'Hello2-2',
-            ),
-        ),
-        2 => array(
-            0 => array(
-                'id' => 0,
-                'name' => 'Hello2',
-            ),
-            1 => array(
-                'id' => 1,
-                'name' => 'Hello2-2',
-            ),
-        ),
-    );
+    private $currentSection;
     
     /**
      * Constructs the LearnModx object
@@ -102,6 +52,7 @@ class LearnModx {
         $assetsUrl = $this->modx->getOption('learnmodx.assets_url', $config,$this->modx->getOption('assets_url') . 'components/learnmodx/');
 
         // Paths for LearnModx
+        $this->basePath = $basePath;
         $this->elementsPath = $basePath . 'elements/';
         $this->storeagePath = $basePath . 'storeage/';
 
@@ -158,10 +109,8 @@ class LearnModx {
         // Check if progress is stores
         if (!file_exists($this->storeagePath . '/progress.json')) {
             // Not saved, start from scratch
-            $progress = array(
-                'chapter' => 0,
-                'section' => 0,
-            );
+            $chapter = 0;
+            $section = 0;
         }
         else {
             // Might be saved, fetch data and try to parse
@@ -170,46 +119,38 @@ class LearnModx {
 
             // Check chapter
             if (isset($progress_json['chapter'])) {
-                $progress['chapter'] = $progress_json['chapter'];
+                $chapter = $progress_json['chapter'];
             }
             else {
-                $progress['chapter'] = 0;
+                $chapter = 0;
             }
 
             // Check section
             if (isset($progress_json['section'])) {
-                $progress['section'] = $progress_json['section'];
+                $section = $progress_json['section'];
             }
             else {
-                $progress['section'] = 0;
+                $section = 0;
             }
         }
 
-        $this->saveProgress($progress);
+        $this->saveProgress($chapter, $section);
     }
 
     /**
      * Save progress
      */
 
-    public function saveProgress($arr) {
+    public function saveProgress($chapter, $section) {
         // Store in class
-        $this->currentChapter = $arr['chapter'];
-        $this->currentSection = $arr['section'];
+        $this->currentChapter = $chapter;
+        $this->currentSection = $section;
 
         // Save in file
-        file_put_contents($this->storeagePath . '/progress.json', json_encode($arr));
-    }
-
-    /**
-     * Getters for chapters and sections
-     */
-
-    public function getChapter() {
-        return $this->thisChapter;
-    }
-    public function getSection() {
-        return $this->currentSection;
+        file_put_contents($this->storeagePath . '/progress.json',
+            json_encode(array(
+                'chapter' => $chapter,
+                'section' => $section)));
     }
 
     /**
@@ -217,8 +158,27 @@ class LearnModx {
      */
 
     public function getAllChapters() {
+        $chapters = array();
+
+        // Read lmx file
+        $handle = fopen($this->elementsPath . 'chapters.lmx', 'r');
+        if ($handle) {
+            $id = 0;
+            while (($line = fgets($handle)) !== false) {
+                $chapters[] = array(
+                    'id' => $id,
+                    'name' => ($id + 1) . ' - ' . str_replace("\n", '', $line),
+                );
+
+                $id++;
+            }
+        }
+
+        // Close file
+        fclose($handle);
+
         // Return chapters
-        return $this->chapters;
+        return $chapters;
     }
 
     /**
@@ -226,12 +186,25 @@ class LearnModx {
      */
 
     public function getSectionsForChapter($chapter) {
-        // Store progress
-        $this->saveProgress(array('chapter' => $chapter,
-            'section' => 0));
+        // Save progress
+        $this->saveProgress($chapter, 0);
 
-        // Return
-        return $this->sections[$chapter];
+        $sections = array();
+
+        // Get sections
+        $id = 0;
+        foreach(glob($this->elementsPath . $chapter . '/*', GLOB_ONLYDIR) as $dir) {
+            $content = file_get_contents($dir . '/name.lmx');
+            $sections[] = array(
+                'id' => $id,
+                'name' => ($id + 1) . ' - ' . str_replace("\n", '', $content),
+            );
+
+            $id++;
+        }
+
+        // Return sections
+        return $sections;
     }
 
     /**
@@ -240,11 +213,10 @@ class LearnModx {
 
     public function getSectionContent($chapter, $section) {
         // Store progress
-        $this->saveProgress(array('chapter' => $chapter,
-            'section' => $section));
+        $this->saveProgress($chapter, $section);
 
         // Get content
-        $content = file_get_contents($this->config['elementsPath'] . $this->currentChapter . '/section' . $this->currentSection . '.md');
+        $content = file_get_contents($this->config['elementsPath'] . $this->currentChapter . '/' . $this->currentSection . '/description.md');
 
         // New instance of Markdown
         $parser = new \Michelf\MarkdownExtra;
@@ -254,20 +226,93 @@ class LearnModx {
     }
 
     /**
+     * Run setup for a section
+     */
+
+    public function runSetup($chapter, $section) {
+        $content = '';
+        $success = true;
+        $msg = null;
+
+        // Check if there are any setup file for this section
+        if (file_exists($this->config['elementsPath'] . $chapter . '/' . $section . '/setup.php')) {
+            // Include file
+            require_once $this->config['elementsPath'] . $chapter . '/' . $section . '/setup.php';
+
+            // Run setup
+            $class =new ReflectionClass('SectionSetup');
+            $setup = $class->newInstanceArgs(array($this->modx));
+        }
+        else {
+            $success = false;
+            $msg = 'This section does not have any setup. Nothing was altered.';
+        }
+
+        // Return
+        return $this->rawOutput($content, $success, $msg);
+    }
+
+    /**
+     * Run verify for a section
+     */
+
+    public function runVerify($chapter, $section) {
+        $content = '';
+        $msg = null;
+
+        // Check if there are any setup file for this section
+        if (file_exists($this->config['elementsPath'] . $chapter . '/' . $section . '/verify.php')) {
+            // Include file
+            require_once $this->config['elementsPath'] . $chapter . '/' . $section . '/verify.php';
+
+            // Run setup
+            $class = new ReflectionClass('SectionVerify');
+            $verify = $class->newInstanceArgs(array($this->modx));
+
+            $msg = $verify->cleanOutput();
+        }
+        else {
+            $content = 'Error';
+            $msg = 'This section can\'t be verified. Nothing was done.';
+        }
+
+        if ($content == '') {
+            if ($verify->getState()) {
+                $content = 'Hurray!';
+            }
+            else {
+                $content = 'Darn';
+            }
+        }
+
+        // Return
+        return $this->rawOutput($content, false, $msg);
+    }
+
+    /**
      * Output for processors
      */
 
-    public function output($arr) {
+    public function output($arr, $success = true) {
         return json_encode(array(
-            'success' => true,
+            'success' => $success,
             'results' => $arr,
             'total' => count($arr),
         ));
     }
-    public function rawOutput($content) {
-        return json_encode(array(
-            'success' => true,
-            'content' => $content
-        ));
+    public function rawOutput($content, $success = true, $message = null) {
+        // Initial array
+        $output = array(
+            'success' => $success,
+            'content' => $content,
+        );
+
+        // Add message if supplied
+        if ($message !== null) {
+            $output['message'] = $message;
+        }
+
+        // Return
+        return json_encode($output);
     }
 }

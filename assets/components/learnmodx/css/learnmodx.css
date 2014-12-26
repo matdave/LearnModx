@@ -1,0 +1,9 @@
+#learnmodx-content h1 {
+    color: #555;
+    font: 400 25px "Helvetica Neue",Helvetica,Arial,Tahoma,sans-serif;
+    margin-bottom: 10px;
+}
+#learnmodx-content p {
+    padding-bottom: 10px;
+    color: #53595f;
+}

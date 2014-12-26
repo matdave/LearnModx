@@ -53,9 +53,11 @@ LearnModx.panel.Home = function(config) {
                     ,allowBlank: true
                     ,value: LearnModx.config.section
                     ,listeners: {
-                        'render': {fn: function(cmp) {
-                            this.fireEvent('load-content');
-                        }}
+                        'render': {
+                            fn: function(cmp) {
+                                this.fireEvent('load-content');
+                            }
+                        }
                     }
                 },{
                     xtype: 'panel'
@@ -64,6 +66,19 @@ LearnModx.panel.Home = function(config) {
                     xtype: 'button'
                     ,text: _('learnmodx:setup')
                     ,style: 'display: block;color:#fff;background-color: #d9534f;border-color: #d43f3a;'
+                    ,handler: function () {
+                        MODx.msg.confirm({
+                            title: _('learnmodx:setupwarning')
+                            ,text: _('learnmodx:setupwarning_help')
+                            ,url: LearnModx.config.connectorUrl
+                            ,params: {
+                                action: 'mgr/learnmodx/runsetup'
+                                ,chapter: Ext.getCmp('learnmodx-section').getStore().baseParams['chapter']
+                                ,section: Ext.getCmp('learnmodx-section').getStore().baseParams['section']
+
+                            }
+                        });
+                    }
                 },{
                     xtype: 'panel'
                     ,html: '<hr />'
@@ -72,6 +87,27 @@ LearnModx.panel.Home = function(config) {
                     ,text: _('learnmodx:verify')
                     ,cls: 'primary-button'
                     ,style: 'display: block;'
+                    ,handler: function () {
+                        MODx.Ajax.request({
+                            url: LearnModx.config.connectorUrl
+                            ,params: {
+                                action: 'mgr/learnmodx/runverify'
+                                ,chapter: Ext.getCmp('learnmodx-section').getStore().baseParams['chapter']
+                                ,section: Ext.getCmp('learnmodx-section').getStore().baseParams['section']
+
+                            }
+                            ,listeners: {
+                                'success': {
+                                    fn: function(r) {}
+                                    ,scope: this
+                                }
+                                ,'failure': {
+                                    fn:function(r) {}
+                                    ,scope:this
+                                }
+                            }
+                        });
+                    }
                 }]
             }]
         }]
@@ -161,9 +197,12 @@ LearnModx.combo.Section = function(config){
                 ,section: this.getStore().baseParams['section']
             }
             ,listeners: {
-                'success':{fn:function(r) {
-                    Ext.getCmp('learnmodx-content').update(r.content);
-                },scope:this}
+                'success': {
+                    fn: function(r) {
+                        Ext.getCmp('learnmodx-content').update(r.content);
+                    }
+                    ,scope:this
+                }
             }
         });
     };

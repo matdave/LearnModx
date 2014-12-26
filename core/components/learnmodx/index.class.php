@@ -1,11 +1,4 @@
 <?php
-/**
- * @package learnmodx
- * @subpackage controllers
- */
- 
-echo get_included_files();
-debug_print_backtrace();
 require_once dirname(__FILE__) . '/model/learnmodx/learnmodx.class.php';
 
 class IndexManagerController extends modExtraManagerController {

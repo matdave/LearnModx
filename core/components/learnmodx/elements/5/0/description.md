@@ -1,0 +1,1 @@
+Open the resource with id 1 and give it pagetitle Hello

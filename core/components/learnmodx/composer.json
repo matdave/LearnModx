@@ -1,5 +1,6 @@
 {
     "require": {
-        "michelf/php-markdown": "1.4.1"
+        "michelf/php-markdown": "1.4.1",
+        "sebastian/comparator": "1.0.*"
     }
 }

@@ -28,3 +28,5 @@ $_lang['learnmodx:section'] = 'Section';
 $_lang['learnmodx:setup'] = 'Setup';
 $_lang['learnmodx:verify'] = 'Verify';
 $_lang['learnmodx:selectsection'] = 'Select section';
+$_lang['learnmodx:setupwarning'] = 'Are you sure you want to run Setup?';
+$_lang['learnmodx:setupwarning_help'] = 'Running the Setup will delete Resources, templates, snippets, chunks, plugins and perhaps other elements. This is irreversiable.<br /><br />DO NOT RUN THIS ON A SITE WITH CONTENT THAT YOU CARE ABOUT';
