@@ -11,7 +11,7 @@ LearnModx.panel.Home = function(config) {
         },{
             layout: 'form'
             ,items: [{
-                html: '<p>Her goes dummpy text</p>'
+                html: _('learnmodx:help')
                 ,bodyCssClass: 'panel-desc'
                 ,border: false
             }]
@@ -30,7 +30,7 @@ LearnModx.panel.Home = function(config) {
                     ,cls:'main-wrapper'
                     ,layout: 'form'
                     ,labelAlign: 'top'
-                    ,html: '<h1>Loading...</h1>'
+                    ,html: _('learnmodx:loading')
                 }]
             },{
                 columnWidth: .3

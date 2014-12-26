@@ -92,4 +92,15 @@ class LearnModxVerify {
 
         return $str;
     }
+
+    public function loadContent($id) {
+        $ch = curl_init();
+
+        curl_setopt_array($ch, array(
+            CURLOPT_URL => $this->modx->getOption('site_url') . $this->modx->makeUrl($id),
+            CURLOPT_RETURNTRANSFER => true
+        ));
+
+        return curl_exec($ch);
+    }
 }

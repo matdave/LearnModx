@@ -23,10 +23,12 @@ $_lang['learnmodx'] = 'Learn MODx';
 $_lang['learnmodx:default'] = 'Learn MODx';
 $_lang['learnmodx:desc'] = 'Tutorial to help you learn MODx';
 
+$_lang['learnmodx:loading'] = '<h1>Loading...</h1>';
 $_lang['learnmodx:chapter'] = 'Chapter';
 $_lang['learnmodx:section'] = 'Section';
 $_lang['learnmodx:setup'] = 'Setup';
 $_lang['learnmodx:verify'] = 'Verify';
 $_lang['learnmodx:selectsection'] = 'Select section';
 $_lang['learnmodx:setupwarning'] = 'Are you sure you want to run Setup?';
+$_lang['learnmodx:help'] = 'Chose a chapter and a section in the menues on the right. Read the instructions and solve the task. Read chapter 1, section 1 for an introduction.';
 $_lang['learnmodx:setupwarning_help'] = 'Running the Setup will delete Resources, templates, snippets, chunks, plugins and perhaps other elements. This is irreversiable.<br /><br />DO NOT RUN THIS ON A SITE WITH CONTENT THAT YOU CARE ABOUT';

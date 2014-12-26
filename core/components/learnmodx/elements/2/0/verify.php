@@ -16,21 +16,17 @@ class SectionVerify extends LearnModxVerify {
 
         // Get resouce
         $c = $this->modx->newQuery('modResource');
-        $c->where(array('pagetitle', 'LearnModx'));
+        $c->where(array('pagetitle' => 'LearnModx'));
         $resource = $this->modx->getObject('modResource', $c);
         $resource_longtitle = null;
         if ($resource != null) {
             $resource_longtitle = $resource->get('longtitle');
         }
-
-        // Set start page
-
-
         $this->compare('Hello', $resource_longtitle);
 
         // Get template
         $c2 = $this->modx->newQuery('modTemplate');
-        $c2->where(array('templatename', 'LearnModx'));
+        $c2->where(array('templatename' => 'LearnModx'));
         $template = $this->modx->getObject('modTemplate', $c2);
         $template_content = null;
         if ($template != null) {
