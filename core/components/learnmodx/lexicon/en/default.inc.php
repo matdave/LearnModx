@@ -25,4 +25,6 @@ $_lang['learnmodx:desc'] = 'Tutorial to help you learn MODx';
 
 $_lang['learnmodx:chapter'] = 'Chapter';
 $_lang['learnmodx:section'] = 'Section';
-$_lang['learnmodx:load'] = 'Load';
+$_lang['learnmodx:setup'] = 'Setup';
+$_lang['learnmodx:verify'] = 'Verify';
+$_lang['learnmodx:selectsection'] = 'Select section';

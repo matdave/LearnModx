@@ -97,15 +97,16 @@ class LearnModx {
     function __construct(modX &$modx, array $config = array()) {
         $this->modx = &$modx;
 
-        // Load chapter and section here
-        $this->currentChapter = 0;
-        $this->currentSection = 0;
-
         // Usual stuff
         $basePath = $this->modx->getOption('learnmodx.core_path', $config,$this->modx->getOption('core_path') . 'components/learnmodx/');
         $assetsUrl = $this->modx->getOption('learnmodx.assets_url', $config,$this->modx->getOption('assets_url') . 'components/learnmodx/');
 
+        // Paths for LearnModx
         $this->elementsPath = $basePath . 'elements/';
+        $this->storeagePath = $basePath . 'storeage/';
+
+        // Load progress
+        $this->loadProgress();
 
         $this->config = array_merge(array(
             'basePath' => $basePath,
@@ -124,7 +125,6 @@ class LearnModx {
             'chapter' => $this->currentChapter,
             'section' => $this->currentSection,
         ), $config);
-
 
         $this->modx->addPackage('learnmodx', $this->config['modelPath']);
     }
@@ -148,6 +148,57 @@ class LearnModx {
             break;
         }
         return true;
+    }
+
+    /**
+     * Load progress from json file
+     */
+
+    private function loadProgress() {
+        // Check if progress is stores
+        if (!file_exists($this->storeagePath . '/progress.json')) {
+            // Not saved, start from scratch
+            $progress = array(
+                'chapter' => 0,
+                'section' => 0,
+            );
+        }
+        else {
+            // Might be saved, fetch data and try to parse
+            $progress = array();
+            $progress_json = json_decode(file_get_contents($this->storeagePath . '/progress.json'), true);
+
+            // Check chapter
+            if (isset($progress_json['chapter'])) {
+                $progress['chapter'] = $progress_json['chapter'];
+            }
+            else {
+                $progress['chapter'] = 0;
+            }
+
+            // Check section
+            if (isset($progress_json['section'])) {
+                $progress['section'] = $progress_json['section'];
+            }
+            else {
+                $progress['section'] = 0;
+            }
+        }
+
+        $this->saveProgress($progress);
+    }
+
+    /**
+     * Save progress
+     */
+
+    public function saveProgress($arr) {
+        // Store in class
+        $this->currentChapter = $arr['chapter'];
+        $this->currentSection = $arr['section'];
+
+        // Save in file
+        file_put_contents($this->storeagePath . '/progress.json', json_encode($arr));
     }
 
     /**
@@ -175,15 +226,12 @@ class LearnModx {
      */
 
     public function getSectionsForChapter($chapter) {
+        // Store progress
+        $this->saveProgress(array('chapter' => $chapter,
+            'section' => 0));
+
+        // Return
         return $this->sections[$chapter];
-    }
-
-    /**
-     * Returns name for a given section
-     */
-
-    public function getSectionById($chapter, $section) {
-        //
     }
 
     /**
@@ -191,6 +239,10 @@ class LearnModx {
      */
 
     public function getSectionContent($chapter, $section) {
+        // Store progress
+        $this->saveProgress(array('chapter' => $chapter,
+            'section' => $section));
+
         // Get content
         $content = file_get_contents($this->config['elementsPath'] . $this->currentChapter . '/section' . $this->currentSection . '.md');
 
@@ -199,7 +251,6 @@ class LearnModx {
 
         // Parse
         return $parser::defaultTransform($content);
-
     }
 
     /**
