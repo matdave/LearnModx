@@ -32,9 +32,37 @@ class LearnModxVerify {
     }
 
     protected function compare($expected, $actual) {
+        $pretty_expected = $expected;
+        $pretty_actual = $actual;
+
+        // True
+        if ($pretty_expected === true) {
+            $pretty_expected = 'true';
+        }
+        if ($pretty_actual === true) {
+            $pretty_actual = 'true';
+        }
+
+        // False
+        if ($pretty_expected === false) {
+            $pretty_expected = 'false';
+        }
+        if ($pretty_actual === false) {
+            $pretty_actual = 'false';
+        }
+
+        // Null
+        if ($pretty_expected === null) {
+            $pretty_expected = '(null)';
+        }
+        if ($pretty_actual === null) {
+            $pretty_actual = '(null)';
+        }
+
+
         $res = array(
-            'expected' => $expected,
-            'actual' => $actual,
+            'expected' => $pretty_expected,
+            'actual' => $pretty_actual,
             'results' => true,
         );
         $comparator = $this->factory->getComparatorFor($expected, $actual);

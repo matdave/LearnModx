@@ -8,34 +8,33 @@ About this Extra
 
 LearnModx was written by [OptimusCrime](https://github.com/OptimusCrime).
 
-
 What does this Extra do?
 ========================
 
 This Extra has a collection of problems and challenges that should give you a broad understanding of Modx.
 These challenges range from understanding the simplest things, to utilizing the most powerful tools in Modx.
-It functions as a tutorial giving you set of tasks with increased difficulity.
+It functions as a tutorial giving you set of tasks with increased difficulty.
 
 How does this Extra work?
 =========================
 
-For each section in each chapter in this tutorial, you will be given a description text. The text describes how do solve
+For each section in each chapter in this tutorial, you will be given a description text. The text describes how to solve
 the task.
 
-Some tasks require a special setup to be able to complete correctly. This can be predefined resources, chunks etc. You can
+Some tasks require a special setup to be able to complete it correctly. This can be predefined resources, chunks etc. You can
 generate these elements by clicking the Setup button to the right. Please read the section below before doing so.
 
 When you are finished with a task, click the Verify button to verify the solution. The verification will run a series of
-tests to check if you solved the problem as intended.
+tests to check if you solved the problem correctly.
 
-You can move to the next task by chosing in the dropdown menu labeled Section to the right. All sections are grouped into
-chapters that makes it easier to progress throught the tutorial. When you are finished with the last section in a chapter,
-move to the next chapter by selecting it in the dropdown labeld Chapter.
+You can move to the next task by selecting it in the dropdown menu labeled Section to the right. All sections are grouped into
+chapters that makes it easier to progress through the tutorial. When you are finished with the last section in a chapter,
+move to the next chapter by selecting it in the dropdown labeled Chapter.
 
-Important node on running Setup
+Important note on running Setup
 ===============================
 
-Running the Setup will erase certain partitions of the site. This is an unreversable erase.
+Running the Setup will erase certain partitions of the site. This is an irreversible erase.
 
 DON'S USE THIS EXTRA WITH A MODX INSTALLATION THAT YOU CARE ABOUT.
 
@@ -44,4 +43,4 @@ Resources, snippets, templates, chunks, plugins and other elements might be remo
 Lets get started!
 =================
 
-Head over to the next section be chosing in the dropdown to the right.
+Head over to the next section be selecting it in the dropdown to the right.

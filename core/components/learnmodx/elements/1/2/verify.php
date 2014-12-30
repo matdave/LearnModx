@@ -15,11 +15,16 @@ class SectionVerify extends LearnModxVerify {
         parent::__construct($modx);
 
         // Get resource
-        $resource = $this->getResource(1);
-
+        $c = $this->modx->newQuery('modResource');
+        $c->where(array('pagetitle' => 'Hello'));
+        $resource = $this->modx->getObject('modResource', $c);
+        $resource_longtitle = null;
+        $resource_content = null;
         if ($resource != null) {
-            $this->compare('Hello', $resource->get('pagetitle'));
-            $this->compare('Hello world', $resource->get('longtitle'));
+            $resource_longtitle = $resource->get('longtitle');
+            $resource_content = $resource->get('content');
         }
+        $this->compare('Hello world', $resource_longtitle);
+        $this->compare('Lorem ipsum', $resource_content);
     }
 }
